@@ -15,6 +15,7 @@ colours: red, blue, navy, green, orange, grey-silver).
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Callable
 
 from PyQt6.QtCore import Qt, QRectF, QPointF
@@ -27,6 +28,21 @@ from PyQt6.QtWidgets import (
 )
 
 _CONTENT_BG = "#f0f2f5"
+
+# ── Dashboard logo image ──────────────────────────────────────────────────
+# To change the dashboard logo, drop a replacement PNG at this exact path
+# and filename — no code change needed:
+#       frontend/assets/images/dashboard_logo.png
+#
+# Sizing: the logo is shown on screen at _LOGO_DISPLAY_SIZE px (square).
+# Save your source file at 2x that (currently 380x380px) so it stays sharp
+# on high-DPI displays; it will be downscaled to fit. Use PNG with a
+# transparent background so it sits cleanly on the #f0f2f5 dashboard
+# background. If the file is missing, the original hand-drawn Prigag
+# pinwheel logo is used instead.
+_LOGO_DIR = Path(__file__).resolve().parent / "assets" / "images"
+_LOGO_PATH = _LOGO_DIR / "dashboard_logo.png"
+_LOGO_DISPLAY_SIZE = 190  # on-screen px, matches the old _PrigagLogo(size=190)
 
 # ── Prigag pinwheel logo widget ───────────────────────────────────────────────
 
@@ -106,6 +122,32 @@ class _PrigagLogo(QWidget):
         painter.end()
 
 
+def _make_logo_widget(size: int = _LOGO_DISPLAY_SIZE) -> QWidget:
+    """
+    Returns the widget used for the dashboard logo.
+
+    If frontend/assets/images/dashboard_logo.png exists and loads, it is
+    scaled to `size`x`size` and shown. Otherwise, falls back to the
+    hand-painted _PrigagLogo pinwheel so the dashboard never shows a
+    broken image.
+    """
+    if _LOGO_PATH.is_file():
+        pixmap = QPixmap(str(_LOGO_PATH))
+        if not pixmap.isNull():
+            label = QLabel()
+            label.setFixedSize(size, size)
+            label.setPixmap(
+                pixmap.scaled(
+                    size, size,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation,
+                )
+            )
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            return label
+    return _PrigagLogo(size=size)
+
+
 # ── Dashboard widget ─────────────────────────────────────────────────────────
 
 class DashboardWidget(QWidget):
@@ -145,8 +187,9 @@ class DashboardWidget(QWidget):
         top_line_row.addStretch(1)
         centre_col.addLayout(top_line_row)
 
-        # Logo
-        logo = _PrigagLogo(size=190)
+        # Logo (swap the file at frontend/assets/images/dashboard_logo.png
+        # to change this without touching code — see _make_logo_widget)
+        logo = _make_logo_widget()
         logo_row = QHBoxLayout()
         logo_row.addStretch(1)
         logo_row.addWidget(logo)
