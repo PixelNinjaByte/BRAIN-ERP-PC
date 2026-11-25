@@ -4,7 +4,7 @@ Brain ERP – Main window shell (post-login).
 Visual layout (matches BRAIN.PRIGAG.COM screenshot):
 ┌──────────────────────────────────────────────────────────────┐
 │  TOP BAR: logo · "BRAIN.PRIGAG.COM" · [T-code input] [>]    │
-│           ───────────────── right: company ▾  🔔  K kasina ▾ │
+│           ───────────────── right: company ▾  N  K kasina ▾ │
 ├───────────────────┬──────────────────────────────────────────┤
 │ SIDE PANEL (dark) │  CONTENT AREA (light grey)               │
 │  ● Brand block    │  Home: centered Prigag logo + prompt     │
@@ -269,12 +269,12 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(14, 0, 14, 0)
         layout.setSpacing(10)
 
-        # ── Left: logo circle + site name ────────────────────────────────
-        logo_circle = QLabel("🧠")
+        # ── Left: logo mark + site name ──────────────────────────────────
+        logo_circle = QLabel("B")
         logo_circle.setFixedSize(28, 28)
         logo_circle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         logo_circle.setStyleSheet(
-            "background: #1a1f2e; border-radius: 14px; font-size: 14px;"
+            "background: #1a1f2e; color: white; font-size: 12px; font-weight: 800;"
         )
 
         brand_col = QVBoxLayout()
@@ -301,7 +301,7 @@ class MainWindow(QMainWindow):
         self.tcode_input.setFixedHeight(32)
         self.tcode_input.setStyleSheet(
             "QLineEdit { background: #f9fafb; color: #111827;"
-            " border: 1px solid #d1d5db; border-radius: 6px;"
+            " border: 1px solid #d1d5db;"
             " padding: 0px 10px; font-size: 12px; }"
             "QLineEdit:focus { border-color: #2563eb; background: white; }"
         )
@@ -311,25 +311,28 @@ class MainWindow(QMainWindow):
         go_btn.setFixedSize(32, 32)
         go_btn.setStyleSheet(
             "QPushButton { background: #2563eb; color: white; border: none;"
-            " border-radius: 6px; font-size: 18px; font-weight: 700; }"
+            " font-size: 18px; font-weight: 700; }"
             "QPushButton:hover { background: #1d4ed8; }"
         )
         go_btn.clicked.connect(self._on_tcode_enter)
 
         # ── Right: company selector + bell + user ────────────────────────
-        company_btn = QPushButton("🏢  BRAIN.PRIGAG.COM  ▾")
+        company_btn = QPushButton("BRAIN.PRIGAG.COM  ▾")
         company_btn.setStyleSheet(
             "QPushButton { background: transparent; color: #374151;"
-            " border: 1px solid #d1d5db; border-radius: 5px;"
+            " border: 1px solid #d1d5db;"
             " padding: 4px 10px; font-size: 10px; font-weight: 600; }"
             "QPushButton:hover { background: #f3f4f6; }"
         )
 
-        bell_btn = QPushButton("🔔")
+        # "N" is a neutral placeholder for the notifications bell until a
+        # real icon asset is wired in.
+        bell_btn = QPushButton("N")
         bell_btn.setFixedSize(32, 32)
         bell_btn.setStyleSheet(
-            "QPushButton { background: transparent; border: none; font-size: 14px; }"
-            "QPushButton:hover { background: #f3f4f6; border-radius: 16px; }"
+            "QPushButton { background: transparent; border: none;"
+            " color: #374151; font-size: 11px; font-weight: 700; }"
+            "QPushButton:hover { background: #f3f4f6; }"
         )
 
         who = self.session.get("full_name") or self.session.get("username") or "User"
@@ -339,7 +342,7 @@ class MainWindow(QMainWindow):
         avatar.setFixedSize(26, 26)
         avatar.setAlignment(Qt.AlignmentFlag.AlignCenter)
         avatar.setStyleSheet(
-            "background: #2563eb; color: white; border-radius: 13px;"
+            "background: #2563eb; color: white;"
             " font-size: 11px; font-weight: 700;"
         )
 
@@ -385,12 +388,13 @@ class MainWindow(QMainWindow):
         bb_layout.setContentsMargins(12, 10, 12, 10)
         bb_layout.setSpacing(10)
 
-        # Prigag logo circle (colourful pinwheel via emoji fallback)
-        logo_lbl = QLabel("🧠")
+        # Prigag logo — plain text placeholder until a real logo image is
+        # wired in (see dashboard_widget.py's swappable-logo mechanism).
+        logo_lbl = QLabel("B")
         logo_lbl.setFixedSize(42, 42)
         logo_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         logo_lbl.setStyleSheet(
-            "background: white; border-radius: 21px; font-size: 20px;"
+            "background: white; color: #1a1f2e; font-size: 16px; font-weight: 800;"
         )
 
         name_col = QVBoxLayout()
@@ -443,13 +447,23 @@ class MainWindow(QMainWindow):
                 div.setStyleSheet("background: #252d40; margin: 6px 0;")
                 nav_vbox.addWidget(div)
             else:
-                # Icon mapping
+                # Icon mapping — "▪" is a neutral placeholder until real
+                # per-module icon assets are added (see _NavRow icon slot).
+                _ICON_PLACEHOLDER = "▪"
                 icons = {
-                    "ADMIN": "⚙", "HR": "👥", "MATERIALS": "📦",
-                    "SALES": "🏷", "BOM": "🔩", "PRODUCTION": "🏭",
-                    "ACCOUNTING": "💰", "QUALITY": "🔬",
-                    "PLANT MAINT.": "🔧", "PROJECTS & DEVELOPMENTS": "📐",
-                    "COMMUNICATION": "💬", "Companies": "🏢", "Settings": "⚙",
+                    "ADMIN": _ICON_PLACEHOLDER,
+                    "HR": _ICON_PLACEHOLDER,
+                    "MATERIALS": _ICON_PLACEHOLDER,
+                    "SALES": _ICON_PLACEHOLDER,
+                    "BOM": _ICON_PLACEHOLDER,
+                    "PRODUCTION": _ICON_PLACEHOLDER,
+                    "ACCOUNTING": _ICON_PLACEHOLDER,
+                    "QUALITY": _ICON_PLACEHOLDER,
+                    "PLANT MAINT.": _ICON_PLACEHOLDER,
+                    "PROJECTS & DEVELOPMENTS": _ICON_PLACEHOLDER,
+                    "COMMUNICATION": _ICON_PLACEHOLDER,
+                    "Companies": _ICON_PLACEHOLDER,
+                    "Settings": _ICON_PLACEHOLDER,
                 }
                 row = _NavRow(
                     label=label,
