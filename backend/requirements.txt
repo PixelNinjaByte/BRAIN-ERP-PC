@@ -1,0 +1,33 @@
+# Brain ERP Desktop — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web framework (backend API)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# Desktop GUI
+PyQt6==6.7.1
+
+# Password hashing (replaces WordPress wp_set_password)
+bcrypt==4.2.0
+
+# HTTP client (PyQt6 screens call FastAPI)
+httpx==0.27.2
+
+# Data validation (replaces WordPress sanitize_text_field + nonces)
+pydantic==2.8.2
+
+# Date utilities (fiscal year seeding)
+python-dateutil==2.9.0
+
+# Email templating (replaces wp_mail HTML bodies)
+# (stdlib smtplib used directly — no extra package needed)
+
+# Packaging → .exe
+pyinstaller==6.10.0
+
+# Optional: AI invoice scanning (replaces msme_erp_invoice_extract)
+# Uncomment if you want AI features:
+# google-generativeai==0.7.2
+# Pillow==10.4.0
+# pdfplumber==0.11.4
