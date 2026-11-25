@@ -85,7 +85,7 @@ def _dt_local(val: Optional[str]) -> Optional[str]:
 @router.get("/lookups")
 def bid_lookups(pr_id: Optional[int] = None,
                  auth: ErpAuth = Depends(require_tcode("BID01"))):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
 
     categories = ErpDB.fetch_all(
         "SELECT id, code, name FROM factory_categories WHERE company_id=? AND is_active=1 ORDER BY code",
@@ -134,7 +134,7 @@ def bid_lookups(pr_id: Optional[int] = None,
 # -------------------------------------------------------------- create ----
 @router.post("")
 def create_bid(body: BidCreateIn, auth: ErpAuth = Depends(require_tcode("BID01"))):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
 
     items = []
     for it in body.items:
@@ -217,7 +217,7 @@ def create_bid(body: BidCreateIn, auth: ErpAuth = Depends(require_tcode("BID01")
 # ---------------------------------------------------------------- list ----
 @router.get("")
 def list_bids(status: Optional[str] = None, auth: ErpAuth = Depends(require_tcode("BID02"))):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
     where = "WHERE b.company_id = ?"
     params = [company_id]
     if status:
@@ -234,7 +234,7 @@ def list_bids(status: Optional[str] = None, auth: ErpAuth = Depends(require_tcod
 # -------------------------------------------------------------- detail ----
 @router.get("/{bid_id}")
 def get_bid(bid_id: int, auth: ErpAuth = Depends(require_tcode("BID02"))):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
     bid = ErpDB.fetch_one(
         """SELECT b.*, fc.code AS category_code, fc.name AS category_name,
                   p.code AS unit_code, p.name AS unit_name,
@@ -306,7 +306,7 @@ def get_bid(bid_id: int, auth: ErpAuth = Depends(require_tcode("BID02"))):
 # ---------------------------------------------------------- status change --
 @router.post("/{bid_id}/status")
 def change_status(bid_id: int, body: StatusChangeIn, auth: ErpAuth = Depends(require_tcode("BID02"))):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
     bid = ErpDB.fetch_one("SELECT * FROM bids WHERE id=? AND company_id=?", [bid_id, company_id])
     if not bid:
         raise HTTPException(status_code=404, detail="Bid not found.")

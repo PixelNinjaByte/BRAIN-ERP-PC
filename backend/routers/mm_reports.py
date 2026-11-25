@@ -65,7 +65,7 @@ def mm_reports_summary(
     w_t: int = 25,
     auth: ErpAuth = Depends(require_tcode("ZMMR")),
 ):
-    company_id = auth.company_id()
+    company_id = ErpAuth.company_id()
     today = date.today()
 
     # ---------------- Filters ----------------
