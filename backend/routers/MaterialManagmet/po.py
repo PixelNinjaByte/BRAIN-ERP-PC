@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 
 from core.db import ErpDB
 from core.auth import ErpAuth
-from .deps import require_login, require_tcode, ok, fail
+from ..deps import require_login, require_tcode, ok, fail
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

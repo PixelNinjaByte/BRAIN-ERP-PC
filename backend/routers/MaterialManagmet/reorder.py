@@ -39,7 +39,7 @@ from core.db import ErpDB
 from core.auth import ErpAuth
 from core.material import item_block_sql, create_pr
 from core.helpers import item_stock_map
-from .deps import require_tcode, ok, fail
+from ..deps import require_tcode, ok, fail
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/reorder", tags=["ZMRP - Reorder Report"])

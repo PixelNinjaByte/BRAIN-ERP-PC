@@ -51,7 +51,7 @@ from core.rfq_compare import (
     log_negotiation_round,
     create_po_from_comparison,
 )
-from .deps import require_tcode, ok, fail
+from ..deps import require_tcode, ok, fail
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/rfq-compare", tags=["ME47 - Compare Quotations"])

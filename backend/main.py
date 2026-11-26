@@ -19,13 +19,14 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.routers import (auth, mm, nav, po, pr, rfq, supplier)
-from backend.routers import migo                 # NEW  - MIGO
-from backend.routers import supplier_invoice     # NEW  - MR01 / LT01 / VK11
-from backend.routers import purchase_return, service_entry
-from backend.routers import reorder, rfq_compare
-from backend.routers import material_groups, mm_reports, bid, mm_pending_report
-from backend.routers import material_import
+from .routers import (auth, nav)
+from .routers.MaterialManagmet import (mm, po, pr, rfq, supplier)
+from .routers.MaterialManagmet import migo                 # NEW  - MIGO
+from .routers.MaterialManagmet import purchase_return, service_entry
+from .routers.MaterialManagmet import reorder, rfq_compare
+from .routers.MaterialManagmet import material_groups, mm_reports, bid, mm_pending_report
+from .routers.MaterialManagmet import material_import
+from .routers.MaterialManagmet import supplier_invoice     # NEW  - MR01 / LT01 / VK11
 
 
 
@@ -79,4 +80,4 @@ def create_app() -> FastAPI:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8765, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=8765, log_level="info")

@@ -43,7 +43,7 @@ from core.service_entry import (
     accept_service_entry_sheet,
     reject_service_entry_sheet,
 )
-from .deps import require_login, require_tcode, require_role, ok, fail
+from ..deps import require_login, require_tcode, require_role, ok, fail
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/service-entry", tags=["ML81N - Service Entry Sheet"])
