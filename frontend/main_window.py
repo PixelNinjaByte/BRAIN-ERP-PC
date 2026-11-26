@@ -30,21 +30,22 @@ from PyQt6.QtWidgets import (
 from .api_client import ApiClient, ApiError
 from .dashboard_widget import DashboardWidget
 from .mm.mm01_widget import MM01Widget
-from .po_widget import POWidget
-from .migo_widget import MIGOWidget
-from .pr_widget import PRWidget
+from .mm.po_widget import POWidget
+from .mm.migo_widget import MIGOWidget
+from .mm.pr_widget import PRWidget
 from .mm.supplier_invoice_widget import SupplierInvoiceWidget
 from .mm.supplier_widget import SupplierWidget
-from .rfq_widget import RFQWidget
-from .purchase_return_widget import PurchaseReturnWidget
-from .reports_widget import ReportsWidget
+from .mm.rfq_widget import RFQWidget
+from .mm.purchase_return_widget import PurchaseReturnWidget
+from .mm.reports_widget import ReportsWidget
 from .mm.material_import_widget import MaterialImportWidget
 from .skeleton_card import SkeletonCardRow
+from .admin.settings import SettingsWidget
 from .sidebar_icons import (
     ICONS, CHEVRON_RIGHT, CHEVRON_DOWN, logo_svg, svg_pixmap,
 )
 
-# ── Colours ───────────────────────────────────────────────────────────────────
+# ── Cmm.material_import_widget────────────────────────────────────────────────────
 _SIDE_BG       = "#1a1c20"      # near-black neutral — sidebar background
 _SIDE_HOVER    = "#23262c"      # hover row
 _SIDE_ACTIVE   = "#2563eb"      # selected / active row
@@ -79,6 +80,7 @@ _TCODE_INDEX: dict[str, int] = {
     "PRTN": 8,
     "ZMRP": 9, "ME2PN": 9, "ZMMR": 9, "ZREP": 9,
     "ZMMI": 10,
+    "SU01": 12
 }
 
 # ── Sidebar tree ──────────────────────────────────────────────────────────────
@@ -929,6 +931,9 @@ class MainWindow(QMainWindow):
 
         self._coming_soon = _ComingSoon()
         self.stack.addWidget(self._coming_soon)              # 11
+
+        self.settings_widget = SettingsWidget(self.api, self.session)
+        self.stack.addWidget(self.settings_widget)            # 12
 
         layout.addWidget(self.stack)
         return wrapper

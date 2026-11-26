@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
     QHeaderView, QGroupBox, QFrame, QMessageBox
 )
 
-from .api_client import ApiClient, ApiError
+from ..api_client import ApiClient, ApiError
 
 
 class ReportsWidget(QWidget):

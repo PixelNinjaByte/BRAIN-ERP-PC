@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
     QScrollArea, QMessageBox, QDateEdit, QCheckBox
 )
 
-from .api_client import ApiClient, ApiError
+from ..api_client import ApiClient, ApiError
 
 
 def _section(title: str) -> QGroupBox:
