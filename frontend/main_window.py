@@ -30,15 +30,24 @@ from PyQt6.QtWidgets import (
 from .api_client import ApiClient, ApiError
 from .dashboard_widget import DashboardWidget
 from .mm.mm01_widget import MM01Widget
-from .mm.po_widget import POWidget
+from .mm.po_create_widget import POCreateWidget
+from .mm.po_view_widget import POViewWidget
 from .mm.migo_widget import MIGOWidget
-from .mm.pr_widget import PRWidget
+from .mm.pr_create_widget import CreatePRWidget
+from .mm.pr_list_widget import PRListWidget
 from .mm.supplier_invoice_widget import SupplierInvoiceWidget
 from .mm.supplier_widget import SupplierWidget
-from .mm.rfq_widget import RFQWidget
+from .mm.rfq_create_widget import CreateRFQWidget
+from .mm.rfq_compare_widget import RFQCompareWidget
+from .mm.rfq_public_widget import RFQPublicWidget
 from .mm.purchase_return_widget import PurchaseReturnWidget
 from .mm.reports_widget import ReportsWidget
 from .mm.material_import_widget import MaterialImportWidget
+from .mm.material_groups_widget import MaterialGroupsWidget
+from .mm.mm03_widget import MM03Widget
+from .mm.price_list_widget import PriceListWidget
+from .mm.bid_create_widget import BidCreateWidget
+from .mm.bid_view_widget import BidViewWidget
 from .skeleton_card import SkeletonCardRow
 from .admin.settings import SettingsWidget
 from .sidebar_icons import (
@@ -67,20 +76,22 @@ _CONTENT_BG    = "#f0f2f5"
 # ── T-code routing ────────────────────────────────────────────────────────────
 _TCODE_INDEX: dict[str, int] = {
     "HOME": 0,
-    "MM01": 1, "MM02": 1, "MM03": 1,
-    "CRMA": 1, "CHMA": 1, "DIMA": 1, "MAGRW": 1,
+    "MM01": 1, "MM02": 1,
+    "CRMA": 1, "CHMA": 1,
+    "MM03": 14, "DIMA": 14, "MAGRW": 13,
     "MAIME": 10,
-    "ME21N": 2, "ME23N": 2, "ME2L": 2, "ME2M": 2, "ME28": 2, "ME29N": 2, "PO": 2,
+    "ME21N": 2, "ME23N": 20, "ME2L": 2, "ME2M": 2, "ME28": 2, "ME29N": 2, "PO": 2,
     "MIGO": 3, "GRN": 3, "MB51": 3,
-    "ME51N": 4, "ME53N": 4, "PR": 4,
-    "MR01": 5, "MIRO": 5, "LT01": 5, "VK11": 5,
+    "ME51N": 4, "ME53N": 16, "PR": 4,
+    "VK11": 5, "MR01": 5, "MIRO": 5, "LT01": 5,
+    "PRLIM": 15,
     "XK01": 6, "XK02": 6, "SUPP": 6,
     "CRSU": 6, "CHSU": 6,
-    "ME41": 7, "ME47": 7, "RFQ": 7,
+    "ME41": 7, "ME47": 17, "RFQ": 7,
     "PRTN": 8,
     "ZMRP": 9, "ME2PN": 9, "ZMMR": 9, "ZREP": 9,
     "ZMMI": 10,
-    "SU01": 12
+    "SU01": 12, "MAGRW": 13, "BID01": 18, "BID02": 19
 }
 
 # ── Sidebar tree ──────────────────────────────────────────────────────────────
@@ -158,7 +169,7 @@ _NAV_TREE: list[tuple] = [
             ("MATERIAL", "", "", [
                 ("Create Material",          "CRMA",  "CRMA",  None),
                 ("Change Material",          "CHMA",  "CHMA",  None),
-                ("Display Material",         "DIMA",  "DIMA",  None),
+                ("Display Material",         "MM03",  "MM03",  None),
                 ("Material Groups (w...)",   "MAGRW", "MAGRW", None),
                 ("Material Import / Ex...",  "MAIME", "MAIME", None),
                 ("Price List",               "PRLIM", "PRLIM", None),
@@ -902,14 +913,15 @@ class MainWindow(QMainWindow):
         self.mm01 = MM01Widget(self.api)
         self.stack.addWidget(self.mm01)                      # 1
 
-        self.po_widget = POWidget(self.api)
-        self.stack.addWidget(self.po_widget)                 # 2
+        self.po_create_widget = POCreateWidget(self.api)
+        self.stack.addWidget(self.po_create_widget)          # 2
 
         self.migo_widget = MIGOWidget(self.api)
         self.stack.addWidget(self.migo_widget)               # 3
 
-        self.pr_widget = PRWidget(self.api)
-        self.stack.addWidget(self.pr_widget)                 # 4
+        self.pr_create_widget = CreatePRWidget(self.api)
+        self.stack.addWidget(self.pr_create_widget)          # 4
+                
 
         self.invoice_widget = SupplierInvoiceWidget(self.api)
         self.stack.addWidget(self.invoice_widget)            # 5
@@ -917,7 +929,7 @@ class MainWindow(QMainWindow):
         self.supplier_widget = SupplierWidget(self.api)
         self.stack.addWidget(self.supplier_widget)           # 6
 
-        self.rfq_widget = RFQWidget(self.api)
+        self.rfq_widget = CreateRFQWidget(self.api)
         self.stack.addWidget(self.rfq_widget)                # 7
 
         self.return_widget = PurchaseReturnWidget(self.api)
@@ -933,7 +945,31 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self._coming_soon)              # 11
 
         self.settings_widget = SettingsWidget(self.api, self.session)
-        self.stack.addWidget(self.settings_widget)            # 12
+        self.stack.addWidget(self.settings_widget)           # 12
+
+        self.material_groups_widget = MaterialGroupsWidget(self.api)
+        self.stack.addWidget(self.material_groups_widget)    # 13
+
+        self.mm03_widget = MM03Widget(self.api)
+        self.stack.addWidget(self.mm03_widget)               # 14
+
+        self.price_list_widget = PriceListWidget(self.api)
+        self.stack.addWidget(self.price_list_widget)         # 15
+
+        self.pr_list_widget = PRListWidget(self.api)
+        self.stack.addWidget(self.pr_list_widget)            # 16
+
+        self.rfq_compare = RFQCompareWidget(self.api)
+        self.stack.addWidget(self.rfq_compare)               # 17
+
+        self.bid_create_widget = BidCreateWidget(self.api)
+        self.stack.addWidget(self.bid_create_widget)         # 18
+
+        self.bid_view_widget = BidViewWidget(self.api)
+        self.stack.addWidget(self.bid_view_widget)           # 19
+
+        self.po_view_widget = POViewWidget(self.api)
+        self.stack.addWidget(self.po_view_widget) 
 
         layout.addWidget(self.stack)
         return wrapper

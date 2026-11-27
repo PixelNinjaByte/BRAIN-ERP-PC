@@ -162,7 +162,12 @@ class ApiClient:
     def mm_lookups(self) -> dict:
         return _data(self._request("GET", "/api/mm/lookups"))
 
-    def mm_list(self, search: str = "", cat: str = "", type_: str = "", st: str = "active") -> list:
+    def mm_list(self, filters: dict | None = None, search: str = "", cat: str = "", type_: str = "", st: str = "active") -> list:
+        if isinstance(filters, dict):
+            search  = filters.get("search", search)
+            cat     = filters.get("cat", cat)
+            type_   = filters.get("type", type_)
+            st      = filters.get("st", st)
         params = {k: v for k, v in {
             "search": search or None,
             "category": cat or None,
@@ -188,6 +193,27 @@ class ApiClient:
 
     def mm_delete_uom(self, item_id: int, conv_id: int) -> dict:
         return self._request("DELETE", f"/api/mm/materials/{item_id}/uom/{conv_id}")
+
+    # MM03 detail tabs
+    def mm_detail(self, item_id: int) -> dict:
+        res = self._request("GET", f"/api/mm/materials/{item_id}")
+        return res.get("data", res)
+
+    def mm_stock(self, item_id: int) -> list:
+        return _extract_list(self._request("GET", f"/api/mm/materials/{item_id}/stock"))
+
+    def mm_purchases(self, item_id: int) -> list:
+        return _extract_list(self._request("GET", f"/api/mm/materials/{item_id}/purchases"))
+
+    def mm_where_used(self, item_id: int) -> dict:
+        res = self._request("GET", f"/api/mm/materials/{item_id}/where-used")
+        return res.get("data", res)
+
+    def mm_alt_uom(self, item_id: int) -> list:
+        return _extract_list(self._request("GET", f"/api/mm/materials/{item_id}/uom"))
+
+    def mm_history(self, item_id: int) -> list:
+        return _extract_list(self._request("GET", f"/api/mm/materials/{item_id}/history"))
 
     # ------------------------------------------------------------------ MIGO
     def migo_meta(self) -> dict:
@@ -296,6 +322,9 @@ class ApiClient:
     def vk11_save(self, payload: dict) -> dict:
         return self._request("POST", "/api/vk11/save", json=payload)
 
+    def vk11_items(self, price_list_id: int) -> list:
+        return _extract_list(self._request("GET", f"/api/vk11/items/{price_list_id}"))
+
     # ------------------------------------------------------------------ Purchase Returns (PRTN)
     def purchase_return_reasons(self) -> dict:
         res = self._request("GET", "/api/purchase-return/reasons")
@@ -377,6 +406,9 @@ class ApiClient:
 
     def mat_group_update(self, group_id: int, payload: dict) -> dict:
         return self._request("PUT", f"/api/material-groups/{group_id}", json=payload)
+
+    def mat_group_delete(self, group_id: int) -> dict:
+        return self._request("DELETE", f"/api/material-groups/{group_id}")
 
     # ------------------------------------------------------------------ Reports & Planning (ZMRP / ME2PN / ZMMR)
     def reorder_report(self) -> list:
